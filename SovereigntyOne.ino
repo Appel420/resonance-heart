@@ -46,7 +46,7 @@
 #define MAX_TEMPERATURE_C           55.0f
 #define MIN_TEMPERATURE_C            0.0f
 
-#define POLARITY_REVERSE_INTERVAL_MS  1800000UL
+#define POLARITY_REVERSE_INTERVAL_MS  1800000UL  // 30 minutes; tune per feedwater chemistry.
 #define POLARITY_REVERSE_DURATION_MS     3000UL
 #define TELEMETRY_INTERVAL_MS           1000UL
 #define CONTROL_LOOP_INTERVAL_MS          100UL
@@ -79,7 +79,8 @@ struct TelemetryState {
 TelemetryState state;
 
 static inline void writeRelay(uint8_t pin, bool active) {
-  digitalWrite(pin, (RELAY_ACTIVE_HIGH ? active : !active) ? HIGH : LOW);
+  const bool relayLevel = RELAY_ACTIVE_HIGH ? active : !active;
+  digitalWrite(pin, relayLevel ? HIGH : LOW);
 }
 
 static float readScaledVoltage(uint8_t pin) {
@@ -171,8 +172,8 @@ static void applyOutputs(SystemMode mode, bool polarityReversing) {
   state.polarityReversing = polarityReversing;
 }
 
-static void updatePolaritySchedule(unsigned long nowMs) {
-  if (state.mode != MODE_MED || state.faultActive) {
+static void updatePolaritySchedule(unsigned long nowMs, SystemMode mode) {
+  if (mode != MODE_MED || state.faultActive) {
     state.polarityReversing = false;
     return;
   }
@@ -265,11 +266,11 @@ void loop() {
       const SystemMode requestedMode = selectMode(state.pvVoltage, state.tdsPpm);
 
       if (requestedMode != state.mode && requestedMode == MODE_MED) {
+        // Start a fresh polarity cycle whenever MED is re-enabled.
         state.lastPolarityReverseAtMs = nowMs;
       }
 
-      state.mode = requestedMode;
-      updatePolaritySchedule(nowMs);
+      updatePolaritySchedule(nowMs, requestedMode);
       applyOutputs(requestedMode, state.polarityReversing);
     }
   }
