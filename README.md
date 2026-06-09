@@ -1,2 +1,16 @@
 # resonance-heart
-“Device that blinks a fridge light once—only when the dog speaks. No app. No speaker. No cloud. Just resonance. MIT. Because some libraries owe kids silence, not ads.”
+
+Documentation-only placeholder for the `resonance-heart` repository.
+
+## Contents
+
+- `README.md` — project overview
+- `LICENSE` — MIT license text
+
+## Status
+
+This repository currently does not include implementation code or build scripts.
+
+## License
+
+MIT.
