@@ -71,6 +71,7 @@ struct TelemetryState {
   bool faultActive = false;
   const char *faultReason = "none";
   unsigned long modeEnteredAtMs = 0;
+  unsigned long polarityReversalStartedAtMs = 0;
   unsigned long lastTelemetryAtMs = 0;
   unsigned long lastControlAtMs = 0;
   unsigned long lastPolarityReverseAtMs = 0;
@@ -181,12 +182,12 @@ static void updatePolaritySchedule(unsigned long nowMs) {
   if (!state.polarityReversing &&
       (nowMs - state.lastPolarityReverseAtMs) >= POLARITY_REVERSE_INTERVAL_MS) {
     state.polarityReversing = true;
-    state.modeEnteredAtMs = nowMs;
+    state.polarityReversalStartedAtMs = nowMs;
     return;
   }
 
   if (state.polarityReversing &&
-      (nowMs - state.modeEnteredAtMs) >= POLARITY_REVERSE_DURATION_MS) {
+      (nowMs - state.polarityReversalStartedAtMs) >= POLARITY_REVERSE_DURATION_MS) {
     state.polarityReversing = false;
     state.lastPolarityReverseAtMs = nowMs;
   }
