@@ -46,7 +46,7 @@
 #define MAX_TEMPERATURE_C           55.0f
 #define MIN_TEMPERATURE_C            0.0f
 
-#define POLARITY_REVERSE_INTERVAL_MS  1800000UL  // 30 minutes (1,800,000 ms); tune per feedwater chemistry.
+#define POLARITY_REVERSE_INTERVAL_MS  1800000UL  // 30 minutes (1800000 ms); tune per feedwater chemistry.
 #define POLARITY_REVERSE_DURATION_MS     3000UL
 #define TELEMETRY_INTERVAL_MS           1000UL
 #define CONTROL_LOOP_INTERVAL_MS          100UL
@@ -270,7 +270,7 @@ void loop() {
       const SystemMode requestedMode = selectMode(state.pvVoltage, state.tdsPpm);
 
       if (requestedMode != state.mode && requestedMode == MODE_MED) {
-        // Start a fresh polarity cycle whenever MED is re-enabled.
+        // Start a fresh reversal interval whenever MED is re-enabled.
         state.polarityReversing = false;
         state.lastPolarityReverseAtMs = nowMs;
       }
