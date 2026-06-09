@@ -14,6 +14,11 @@ ESP32 controller sketch for a CDI/MED hybrid water system.
 - schedules MED polarity reversal to reduce scaling
 - emits JSON telemetry over Serial at 1 Hz
 
+## Default thresholds
+
+- CDI: 13.0 V PV and 300 ppm TDS
+- MED: 14.0 V PV and 1200 ppm TDS
+
 ## Notes
 
 - Pin assignments and thresholds are defined at the top of `SovereigntyOne.ino`

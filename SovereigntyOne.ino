@@ -46,7 +46,7 @@
 #define MAX_TEMPERATURE_C           55.0f
 #define MIN_TEMPERATURE_C            0.0f
 
-#define POLARITY_REVERSE_INTERVAL_MS  1800000UL  // 30 minutes; tune per feedwater chemistry.
+#define POLARITY_REVERSE_INTERVAL_MS  1800000UL  // 1800 seconds (30 minutes); tune per feedwater chemistry.
 #define POLARITY_REVERSE_DURATION_MS     3000UL
 #define TELEMETRY_INTERVAL_MS           1000UL
 #define CONTROL_LOOP_INTERVAL_MS          100UL
@@ -127,6 +127,10 @@ static const char *modeName(SystemMode mode) {
   }
 }
 
+static bool shouldPumpBeEnabled(SystemMode mode) {
+  return (mode == MODE_CDI || mode == MODE_MED) && !state.faultActive;
+}
+
 static bool evaluateSafety(float pressureKpa, float temperatureC, bool dryRun, const char **reason) {
   if (dryRun) {
     *reason = "dry_run";
@@ -159,7 +163,7 @@ static SystemMode selectMode(float pvVoltage, float tdsPpm) {
 }
 
 static void applyOutputs(SystemMode mode, bool polarityReversing) {
-  const bool pumpOn = (mode == MODE_CDI || mode == MODE_MED) && !state.faultActive;
+  const bool pumpOn = shouldPumpBeEnabled(mode);
 
   writeRelay(PIN_PUMP_RELAY, pumpOn);
   writeRelay(PIN_CDI_RELAY, mode == MODE_CDI);
