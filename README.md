@@ -1,16 +1,20 @@
 # resonance-heart
 
-Documentation-only placeholder for the `resonance-heart` repository.
+ESP32 controller sketch for a CDI/MED hybrid water system.
 
-## Contents
+## Files
 
-- `README.md` — project overview
-- `LICENSE` — MIT license text
+- `SovereigntyOne.ino` — main controller sketch
+- `LICENSE` — MIT license
 
-## Status
+## What it does
 
-This repository currently does not include implementation code or build scripts.
+- switches between CDI and MED modes from PV voltage and TDS thresholds
+- pauses on dry-run, over-pressure, and temperature faults
+- schedules MED polarity reversal to reduce scaling
+- emits JSON telemetry over Serial at 1 Hz
 
-## License
+## Notes
 
-MIT.
+- Pin assignments and thresholds are defined at the top of `SovereigntyOne.ino`
+- The sketch targets the Arduino/ESP32 toolchain
