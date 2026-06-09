@@ -70,7 +70,6 @@ struct TelemetryState {
   bool polarityReversing = false;
   bool faultActive = false;
   const char *faultReason = "none";
-  unsigned long modeEnteredAtMs = 0;
   unsigned long polarityReversalStartedAtMs = 0;
   unsigned long lastTelemetryAtMs = 0;
   unsigned long lastControlAtMs = 0;
@@ -175,7 +174,6 @@ static void applyOutputs(SystemMode mode, bool polarityReversing) {
 static void updatePolaritySchedule(unsigned long nowMs) {
   if (state.mode != MODE_MED || state.faultActive) {
     state.polarityReversing = false;
-    state.lastPolarityReverseAtMs = nowMs;
     return;
   }
 
@@ -266,8 +264,8 @@ void loop() {
     } else {
       const SystemMode requestedMode = selectMode(state.pvVoltage, state.tdsPpm);
 
-      if (requestedMode != state.mode) {
-        state.modeEnteredAtMs = nowMs;
+      if (requestedMode != state.mode && requestedMode == MODE_MED) {
+        state.lastPolarityReverseAtMs = nowMs;
       }
 
       state.mode = requestedMode;
